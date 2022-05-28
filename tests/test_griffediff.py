@@ -27,5 +27,5 @@ def test_compare_function(name: str, old_new: Tuple[Module, Module]):
     if name not in new.members:
         return
     new_func, old_func = new.members[name], old.members[name]
-    reasons = func_incompatibilities(new_func, old_func)
+    reasons = list(func_incompatibilities(new_func, old_func))
     assert bool(reasons) != name.startswith("ok")
