@@ -22,6 +22,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
+    "griffe",
 ]
 
 [project.optional-dependencies]
@@ -111,7 +112,7 @@ ignore = [
   ".flake8",
   ".github_changelog_generator",
   ".pre-commit-config.yaml",
-  "tests/*",
+  "tests/**/*",
   "tox.ini",
 ]
 
