@@ -1,0 +1,22 @@
+{
+  "template": "/Users/talley/python/pyrepo-cookiecutter",
+  "commit": "91eafd9161608c3fc9f05c8766a844e530b6585e",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Talley Lambert",
+      "email": "talley.lambert@gmail.com",
+      "github_username": "tlambert03",
+      "project_name": "griffediff",
+      "project_slug": "griffediff",
+      "project_short_description": "API comparison using griffe",
+      "pypi_username": "talley",
+      "version_control": "setuptools-scm",
+      "_copy_without_render": [
+        ".github/workflows/*"
+      ],
+      "_template": "/Users/talley/python/pyrepo-cookiecutter"
+    }
+  },
+  "directory": null
+}
