@@ -22,6 +22,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
+    "griffe",
 ]
 
 [project.optional-dependencies]
