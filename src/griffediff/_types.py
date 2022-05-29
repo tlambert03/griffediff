@@ -1,8 +1,7 @@
 import builtins
-from typing import Any, Union, get_origin, get_type_hints
+from typing import Any, Optional, Union, get_origin, get_type_hints
 
 from griffe.expressions import Expression, Name
-from pyparsing import Optional
 
 BUILTIN_NAMES = dir(builtins)
 
