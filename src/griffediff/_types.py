@@ -39,27 +39,21 @@ class _Ann:
         self.__annotations__ = {self._KEY: obj}
 
     def resolve(
-        self,
-        globalns: Optional[dict] = None,
-        localns: Optional[dict] = None,
-        include_extras: bool = False,
+        self, globalns: Optional[dict] = None, localns: Optional[dict] = None
     ) -> Any:
         import typing
 
         localns = localns or {}
         localns.update({**vars(typing), "typing": typing})
-        return get_type_hints(self, globalns, localns, include_extras).get(self._KEY)
+        return get_type_hints(self, globalns, localns).get(self._KEY)
 
 
 def _resolve_ref(
-    obj: str,
-    globalns: Optional[dict] = None,
-    localns: Optional[dict] = None,
-    include_extras: bool = False,
+    obj: str, globalns: Optional[dict] = None, localns: Optional[dict] = None
 ) -> Any:
     if obj in BUILTIN_NAMES:
         return getattr(builtins, obj)
-    return _Ann(obj).resolve(globalns, localns, include_extras)
+    return _Ann(obj).resolve(globalns, localns)
 
 
 def resolve(annotation: Union[str, Name, Expression]) -> Any:
