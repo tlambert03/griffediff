@@ -18,7 +18,7 @@ def api_pkg(tmp_path: Path):
 
 def test_git_compare(api_pkg: Path):
     aa = list(git_compare("old", "new", "api", api_pkg))
-    assert len(aa) > 17
+    assert len(aa) > 16
     msgs = {str(i) for i in aa}
     assert "Parameter removed: api.change_param_name ('b')" in msgs
     assert "New required parameter added: api.change_param_name ('c')" in msgs
