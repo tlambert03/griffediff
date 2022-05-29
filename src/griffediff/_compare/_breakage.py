@@ -1,7 +1,8 @@
 import enum
-from typing import Optional
+from typing import Optional, Union
 
-from griffe.dataclasses import Function, Object, Parameter
+from griffe.dataclasses import Alias, Class, Function, Object, Parameter
+from griffe.exceptions import AliasResolutionError
 
 
 class BreakageKind(enum.Enum):
@@ -16,19 +17,29 @@ class BreakageKind(enum.Enum):
     NAME_TYPE_CHANGED = "Public name points to a different type of object."
     ATTRIBUTE_TYPE_CHANGED = "New attribute type is incompatible"
     ATTRIBUTE_VALUE_CHANGED = "Attribute value has changed"
+    CLASS_BASE_REMOVED = "Removed base class"
 
 
 class Breakage:
-    def __init__(self, kind: BreakageKind, obj: Object, reason: str = "") -> None:
+    def __init__(
+        self, kind: BreakageKind, obj: Union[Object, Alias], reason: str = ""
+    ) -> None:
         self.kind = kind
         self.obj = obj
         self.reason = reason
 
     def __str__(self) -> str:
-        return f"{self.kind.value}: {self.obj.canonical_path}"
+        return f"{self.kind.value}: {self._safe_path}"
 
     def __repr__(self) -> str:
-        return f"<{self.kind.name}: {self.obj.canonical_path}>"
+        return f"<{self.kind.name}: {self._safe_path}>"
+
+    @property
+    def _safe_path(self) -> str:
+        try:
+            return str(self.obj.canonical_path)
+        except AliasResolutionError:
+            return getattr(self.obj, "target_path", "")
 
 
 class ParameterBreakage(Breakage):
@@ -52,3 +63,15 @@ class ReturnBreakage(Breakage):
     def __init__(self, obj: Function, new_func: Function) -> None:
         super().__init__(BreakageKind.INCOMPATIBLE_RETURN, obj)
         self.new_func = new_func
+
+
+class ClassBreakage(Breakage):
+    def __init__(
+        self,
+        kind: BreakageKind,
+        old_cls: Class,
+        new_cls: Optional[Class],
+        reason: str = "",
+    ) -> None:
+        super().__init__(kind, old_cls, reason)
+        self.new_cls = new_cls

@@ -1,8 +1,8 @@
 import builtins
-import importlib
-from typing import Any, Union, get_origin
+from typing import Any, Union, get_origin, get_type_hints
 
 from griffe.expressions import Expression, Name
+from pyparsing import Optional
 
 BUILTIN_NAMES = dir(builtins)
 
@@ -33,7 +33,37 @@ def is_subtype(typ: Any, typ_or_tuple: Any) -> bool:
     return isinstance(ao, type) and isinstance(bo, type) and issubclass(ao, bo)
 
 
-def resolve(annotation: Union[str, Name, Expression]) -> object:
+class _Ann:
+    _KEY = "__obj"
+
+    def __init__(self, obj: str) -> None:
+        self.__annotations__ = {self._KEY: obj}
+
+    def resolve(
+        self,
+        globalns: Optional[dict] = None,
+        localns: Optional[dict] = None,
+        include_extras: bool = False,
+    ) -> Any:
+        import typing
+
+        localns = localns or {}
+        localns.update({**vars(typing), "typing": typing})
+        return get_type_hints(self, globalns, localns, include_extras).get(self._KEY)
+
+
+def _resolve_ref(
+    obj: str,
+    globalns: Optional[dict] = None,
+    localns: Optional[dict] = None,
+    include_extras: bool = False,
+) -> Any:
+    if obj in BUILTIN_NAMES:
+        return getattr(builtins, obj)
+    return _Ann(obj).resolve(globalns, localns, include_extras)
+
+
+def resolve(annotation: Union[str, Name, Expression]) -> Any:
     """Resolve `annotation` to python object."""
 
     if isinstance(annotation, str):
@@ -41,13 +71,9 @@ def resolve(annotation: Union[str, Name, Expression]) -> object:
     elif isinstance(annotation, Name):
         name = annotation.full
     elif isinstance(annotation, Expression):
-        raise NotImplementedError()
+        name = annotation[0].full
+        # TODO... more to it
     else:
         raise TypeError("annotation must be a string, Name, or Expression")
 
-    if name in BUILTIN_NAMES:
-        return getattr(builtins, name)
-
-    module_name, class_name = name.rsplit(".", 1)
-    somemodule = importlib.import_module(module_name)
-    return getattr(somemodule, class_name)
+    return _resolve_ref(name)

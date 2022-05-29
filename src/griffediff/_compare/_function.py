@@ -10,6 +10,7 @@ from ._breakage import Breakage, BreakageKind, ParameterBreakage, ReturnBreakage
 POSITIONAL = {ParameterKind.positional_only, ParameterKind.positional_or_keyword}
 
 
+# TODO: decorators!
 def func_incompatibilities(
     old_func: Function, new_func: Function
 ) -> Iterator[Breakage]:
@@ -75,4 +76,11 @@ def _returns_are_compatible(old_func: Function, new_func: Function) -> bool:
     if new_func.returns is None:
         # TODO: it should be configurable to allow/disallow removing a return type
         return False
-    return is_subtype(new_func.returns, old_func.returns)
+
+    with contextlib.suppress(AttributeError):
+        if new_func.returns == old_func.returns:
+            return True
+    try:
+        return is_subtype(new_func.returns, old_func.returns)
+    except Exception:
+        return True

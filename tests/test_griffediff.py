@@ -6,7 +6,7 @@ from griffe.dataclasses import Module
 from griffe.loader import GriffeLoader
 
 from _api import old
-from griffediff._compare import func_incompatibilities, obj_incompatibilities
+from griffediff._compare import func_incompatibilities, module_incompatibilities
 
 FNAMES = [k for k, v in vars(old).items() if isinstance(v, FunctionType)]
 
@@ -36,5 +36,5 @@ def test_compare_function(name: str, old: Module, new: Module):
 
 
 def test_compare_module(new: Module, old: Module):
-    reasons = list(obj_incompatibilities(old, new))
+    reasons = list(module_incompatibilities(old, new))
     assert reasons
