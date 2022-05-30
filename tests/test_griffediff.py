@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from types import FunctionType
 
@@ -5,27 +6,25 @@ import pytest
 from griffe.dataclasses import Module
 from griffe.loader import GriffeLoader
 
-from _api import old
 from griffediff._compare import func_incompatibilities, module_incompatibilities
 
-FNAMES = [k for k, v in vars(old).items() if isinstance(v, FunctionType)]
+_REPO = Path(__file__).parent / "_repo"
+
+sys.path.insert(0, str(_REPO / "v0.1.0"))
+import api as _old  # isort: skip  # noqa
+
+FNAMES = [k for k, v in vars(_old).items() if isinstance(v, FunctionType)]
+sys.path.pop(0)
 
 
 @pytest.fixture
-def api(monkeypatch) -> Module:
-    monkeypatch.syspath_prepend(Path(__file__).parent)
-    loader = GriffeLoader()
-    return loader.load_module("_api")
+def old() -> Module:
+    return GriffeLoader(search_paths=[_REPO / "v0.1.0"]).load_module("api")
 
 
 @pytest.fixture
-def old(api) -> Module:
-    return api["old"]
-
-
-@pytest.fixture
-def new(api) -> Module:
-    return api["new"]
+def new() -> Module:
+    return GriffeLoader(search_paths=[_REPO / "v0.2.0"]).load_module("api")
 
 
 @pytest.mark.parametrize("name", FNAMES)

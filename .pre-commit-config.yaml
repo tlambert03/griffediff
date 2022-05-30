@@ -4,7 +4,7 @@ ci:
   autoupdate_commit_msg: "ci: [pre-commit.ci] autoupdate"
 
 default_install_hook_types: [pre-commit, commit-msg]
-exclude: 'tests/api-pkg'
+exclude: 'tests/_repo'
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit

@@ -1,8 +1,9 @@
 import os
 from contextlib import contextmanager
+from pathlib import Path
 from subprocess import DEVNULL, CalledProcessError, check_output, run
 from tempfile import TemporaryDirectory
-from typing import Iterator
+from typing import Iterator, Union
 from uuid import uuid1
 
 from griffe.dataclasses import Module
@@ -21,7 +22,8 @@ def _assert_git_repo(repo: str) -> None:
 
 
 @contextmanager
-def tmp_worktree(commit: str = "HEAD", repo: str = ".") -> Iterator[str]:
+def tmp_worktree(commit: str = "HEAD", repo: Union[str, Path] = ".") -> Iterator[str]:
+    repo = str(repo)  # cast to string for Path as well
     _assert_git_repo(repo)
     with TemporaryDirectory() as td:
         _name = str(uuid1())
