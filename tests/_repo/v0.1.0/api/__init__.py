@@ -2,6 +2,8 @@
 # fmt: off
 from typing import Sequence
 
+__version__ = "0.1.0"
+
 # OK CHANGES
 
 def ok_unchanged(a, *args, b=1, **kwargs): ...
