@@ -8,7 +8,9 @@
 
 API comparison and breaking-change detection using [griffe](https://github.com/mkdocstrings/griffe).
 
-***Experimental!***
+| ARCHIVED | The functionality in this package is [being added to griffe core](https://github.com/mkdocstrings/griffe/pull/105)|
+|----------| ------------ |
+
 
 See also: https://github.com/Carreau/frappuccino
 
